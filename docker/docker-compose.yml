@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  webapp:
+    image: buddyingdevelopment/php:5.6-apache
+    container_name: wannabeold-webapp
+    hostname: wannabeold
+    domainname: local.jp
+    depends_on:
+      - db
+    volumes:
+      - wannabeold-sync:/var/www/wannabeold
+      - ./setup/vhosts.conf:/etc/httpd/conf.d/vhosts.conf
+    ports:
+      - '80:80'
+    env_file:
+      - ./setup/php.env
+
+  db:
+    image: buddyingdevelopment/mysql:5.6
+    container_name: wannabeold-db
+    volumes:
+      - ./.db:/var/lib/mysql
+      - ./setup/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - '33306:3306'
+    env_file:
+      - ./setup/mysql.env
+
+volumes:
+  wannabeold-sync:
+    external: true
